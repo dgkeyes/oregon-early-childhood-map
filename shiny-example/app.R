@@ -1,3 +1,5 @@
+# From https://laderast.github.io/gradual_shiny/app-2-reactives.html
+
 library(shiny)
 library(tidyverse)
 
