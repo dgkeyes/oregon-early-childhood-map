@@ -71,6 +71,8 @@ ui <- fluidPage(
 
 # Server ------------------------------------------------------------------
 
+set_token(Sys.getenv("MAPBOX_PUBLIC_TOKEN"))
+
 server <- function(input, output) {
   
   child_care_facilities_filtered <- reactive({
@@ -79,8 +81,7 @@ server <- function(input, output) {
   })
   
   output$map <- renderMapdeck(
-    mapdeck(token = "pk.eyJ1IjoiZGdrZXllcyIsImEiOiJ2WGFJQ2U0In0.ftoZlfudaEIJL7OEf-Mw3Q",
-            style = mapdeck_style("light"),
+    mapdeck(style = mapdeck_style("light"),
             pitch = 0 ) %>%
       add_sf(data = child_care_facilities_filtered,
              radius = 2500,
