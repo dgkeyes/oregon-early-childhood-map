@@ -57,10 +57,7 @@ ui <- fluidPage(
       #              selected = "WINE"),
       selectInput(inputId = "qris_input", 
                   label = "QRIS Rating",
-                  choices = c("1", "2", "3", "4", "5", "Missing")),
-      selectInput(inputId = "city_input", 
-                  label = "City",
-                  choices = c("Eugene", "Bend"))
+                  choices = c("1", "2", "3", "4", "5", "Missing"))
     ),
     mainPanel(
       mapdeckOutput(outputId = "map")
@@ -77,7 +74,7 @@ server <- function(input, output) {
   
   child_care_facilities_filtered <- reactive({
     child_care_facilities %>%
-      filter(city == input$city_input)
+      filter(city == input$qris_input)
   })
   
   output$map <- renderMapdeck(
