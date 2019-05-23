@@ -90,9 +90,9 @@ mapdeck(token = "pk.eyJ1IjoiZGdrZXllcyIsImEiOiJ2WGFJQ2U0In0.ftoZlfudaEIJL7OEf-Mw
 <!--   palette = "Blues", -->
 <!--   domain = diversity_index$divindx_cy) -->
 
-<!-- leaflet() %>%  -->
-<!--   addProviderTiles(providers$CartoDB.Positron) %>%  -->
-<!--   # addTiles() %>%  -->
+<!-- leaflet() %>% -->
+<!--   addProviderTiles(providers$CartoDB.Positron) %>% -->
+<!--   # addTiles() %>% -->
 <!--   addPolygons(data = diversity_index, -->
 <!--               fillOpacity = .75, -->
 <!--               fillColor = ~pal(divindx_cy)) -->
