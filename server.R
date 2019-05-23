@@ -54,28 +54,25 @@ server <- function(input, output) {
       filter(qris_stars == input$qris_input)
   })
   
-  
   community_attributes_filtered <- reactive({
     community_attributes %>%
       filter(measure == input$community_attribute)
   })
   
-  
-  # output$map <- renderLeaflet(
-  #   leaflet() %>%
-  #     addProviderTiles(providers$CartoDB.Positron) %>%
-  #     addMarkers(data = child_care_facilities_filtered()) %>% 
-  #     addPolygons(data = community_attributes_filtered,
-  #                 fillOpacity = .75,
-  #                 fillColor = ~pal(value))
-  # )
-  
-  output$map <- renderLeaflet(
-    dk_map <- tm_basemap(leaflet::providers$Stamen.TerrainBackground) +
-      tm_shape(community_attributes) +
-      tm_polygons()
-    
-    tmap_leaflet(dk_map)
+  output$map <- renderMapdeck(
+    mapdeck(style = mapdeck_style("light"),
+            pitch = 0 ) %>%
+      add_sf(data = community_attributes_filtered(),
+             auto_highlight = TRUE,
+             fill_colour = "value",
+             focus_layer = TRUE) %>% 
+      add_sf(data = child_care_facilities_filtered(),
+             radius = 2500,
+             tooltip = "facility_name",
+             fill_colour = oregon_orange,
+             auto_highlight = TRUE,
+             focus_layer = TRUE) 
+
   )
   
 }
