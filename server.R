@@ -6,6 +6,7 @@ library(tigris)
 library(janitor)
 library(sf)
 library(mapdeck)
+library(shinyjs)
 
 
 # Colors ------------------------------------------------------------------
@@ -61,6 +62,9 @@ server <- function(input, output) {
     community_attributes %>%
       filter(measure == input$community_attribute)
   })
+  
+  shinyjs::onclick("toggleAdvanced",
+                   shinyjs::toggle(id = "advanced", anim = TRUE))
   
   output$map <- renderMapdeck(
     mapdeck(style = mapdeck_style("light"),

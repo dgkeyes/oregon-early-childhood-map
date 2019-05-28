@@ -7,6 +7,8 @@ library(janitor)
 library(sf)
 library(mapdeck)
 library(shinyWidgets)
+library(shinyjs)
+library(bsplus)
 
 
 
@@ -20,6 +22,7 @@ community_attributes_vector <- read_csv("data-clean/community-attributes.csv") %
 # UI ----------------------------------------------------------------------
 
 ui <- fillPage(
+  shinyjs::useShinyjs(),
   includeCSS("style.css"),
   mapdeckOutput(outputId = "map",
                 height = "100%"),
@@ -34,9 +37,21 @@ ui <- fillPage(
                 bottom = "auto",
                 width = 450, 
                 height = "auto",
-                # h1("Oregon Early Childhood Needs Assessment"),
-                # icon("calendar"),
                 h3("Child Care Facilities"),
+                a(id = "toggleAdvanced", "Early Learning Programs", href = "#",
+                  class = "section"),
+                shinyjs::hidden(
+                  div(id = "advanced",
+                      sliderTextInput(
+                        # post = "children",
+                        inputId = "capacity",
+                        label = "Capacity", 
+                        choices = seq(1, 100, by = 1),
+                        select = c(1, 100),
+                        width = "90%"
+                      )
+                  )
+                ),
                 sliderTextInput(
                   # post = "children",
                   inputId = "capacity",
@@ -103,6 +118,7 @@ ui <- fillPage(
                   choices = community_attributes_vector,
                   selected = "Diversity Index"
                 )
+                
   )
 )
 

@@ -36,6 +36,10 @@ h4 {
     color: #afb5bc;
 }
 
+.section {
+  font-size: 20px;
+}
+
 /*
 #controls > div:nth-child(3) > label, 
 #regulation_status > label, 
