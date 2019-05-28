@@ -55,16 +55,14 @@ server <- function(input, output) {
   
   child_care_facilities_filtered <- reactive({
     child_care_facilities %>%
-      filter(qris_stars == input$qris_input)
+      filter(qris_stars %in% input$qris_input)
   })
   
   community_attributes_filtered <- reactive({
     community_attributes %>%
-      filter(measure == input$community_attribute)
+      filter(measure %in% input$community_attribute)
   })
   
-  shinyjs::onclick("toggleAdvanced",
-                   shinyjs::toggle(id = "advanced", anim = TRUE))
   
   output$map <- renderMapdeck(
     mapdeck(style = mapdeck_style("light"),

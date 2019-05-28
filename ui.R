@@ -22,7 +22,6 @@ community_attributes_vector <- read_csv("data-clean/community-attributes.csv") %
 # UI ----------------------------------------------------------------------
 
 ui <- fillPage(
-  shinyjs::useShinyjs(),
   includeCSS("style.css"),
   mapdeckOutput(outputId = "map",
                 height = "100%"),
@@ -37,87 +36,79 @@ ui <- fillPage(
                 bottom = "auto",
                 width = 450, 
                 height = "auto",
-                h3("Child Care Facilities"),
-                a(id = "toggleAdvanced", "Early Learning Programs", href = "#",
-                  class = "section"),
-                shinyjs::hidden(
-                  div(id = "advanced",
-                      sliderTextInput(
-                        # post = "children",
-                        inputId = "capacity",
-                        label = "Capacity", 
-                        choices = seq(1, 100, by = 1),
-                        select = c(1, 100),
-                        width = "90%"
-                      )
-                  )
-                ),
-                sliderTextInput(
-                  # post = "children",
-                  inputId = "capacity",
-                  label = "Capacity", 
-                  choices = seq(1, 100, by = 1),
-                  select = c(1, 100),
-                  width = "90%"
-                ),
-                awesomeCheckboxGroup(inputId = "regulation_status",
-                                     label = "Regulation Status", 
-                                     inline = TRUE,
-                                     choices = c("Registered", "Certified", "Exempt", "Recorded"),
-                                     selected = c("Registered", "Certified", "Exempt", "Recorded")),
-                awesomeCheckboxGroup(inputId = "qris_input",
-                                     label = "QRIS Rating",
-                                     inline = TRUE,
-                                     choices = c("1", "2", "3", "4", "5", "No Rating"),
-                                     selected = c("1", "2", "3", "4", "5", "No Rating")),
-                awesomeCheckboxGroup(inputId = "other",
-                                     label = "Other",
-                                     inline = TRUE,
-                                     choices = c("Accepts DHS", 
-                                                 "Head Start", 
-                                                 "Relief Nursery"),
-                                     selected = c("Accepts DHS", 
-                                                  "Head Start", 
-                                                  "Relief Nursery")),
+                h1("Oregon Early Childhood Needs Assessment"),
+                p("Lorem ipsum dolor amet shabby chic iceland squid, biodiesel scenester intelligentsia mixtape live-edge brooklyn chartreuse. Adaptogen poutine aesthetic slow-carb single-origin coffee la croix vexillologist."),
+                bs_accordion(id = "beatles") %>%
+                  bs_set_opts(panel_type = "primary", use_heading_link = TRUE) %>%
+                  bs_append(title = "Early Learning Programs", content = 
+                              list(
+                              sliderTextInput(
+                                # post = "children",
+                                inputId = "capacity",
+                                label = "Capacity", 
+                                choices = seq(1, 100, by = 1),
+                                select = c(1, 100),
+                                width = "90%"
+                              ),
+                            awesomeCheckboxGroup(inputId = "regulation_status",
+                                                 label = "Regulation Status", 
+                                                 inline = TRUE,
+                                                 choices = c("Registered", "Certified", "Exempt", "Recorded"),
+                                                 selected = c("Registered", "Certified", "Exempt", "Recorded")),
+                            awesomeCheckboxGroup(inputId = "qris_input",
+                                                 label = "QRIS Rating",
+                                                 inline = TRUE,
+                                                 choices = c("1", "2", "3", "4", "5", "No Rating"),
+                                                 selected = c("1", "2", "3", "4", "5", "No Rating")),
+                            awesomeCheckboxGroup(inputId = "other",
+                                                 label = "Other",
+                                                 inline = TRUE,
+                                                 choices = c("Accepts DHS", 
+                                                             "Head Start", 
+                                                             "Relief Nursery"),
+                                                 selected = c("Accepts DHS", 
+                                                              "Head Start", 
+                                                              "Relief Nursery"))
+                            )) %>%
+                  bs_append(title = "Schools", content = list(
+                    p("Schools info"),
+                    awesomeRadio(
+                      inputId = "kindergarten_assessment",
+                      label = NULL, 
+                      inline = TRUE,
+                      choices = c("Early Math",
+                                  "Early Reading",
+                                  "Approaches to Learning"),
+                      selected = "Early Math"
+                    ),
+                    prettySwitch(
+                      inputId = "district_boundaries",
+                      label = "Show School District Boundaries", 
+                      value = FALSE,
+                      status = "primary"
+                    ),
+                    prettySwitch(
+                      inputId = "hub_location",
+                      label = "Show Locations",
+                      value = FALSE,
+                      status = "primary"
+                    ),
+                    prettySwitch(
+                      inputId = "hub_areas",
+                      label = "Show Areas Served",
+                      value = FALSE,
+                      status = "primary"
+                    )
+                  )) %>%
+                  bs_append(title = "Communities", content =  awesomeRadio(
+                    inputId = "community_attribute",
+                    width = "90%",
+                    label = NULL, 
+                    choices = community_attributes_vector,
+                    selected = "Diversity Index"
+                  ))
+                
                
-                h3("Kindergarten Assessment"),
-                awesomeRadio(
-                  inputId = "kindergarten_assessment",
-                  label = NULL, 
-                  inline = TRUE,
-                  choices = c("Early Math",
-                              "Early Reading",
-                              "Approaches to Learning"),
-                  selected = "Early Math"
-                ),
-                prettySwitch(
-                  inputId = "district_boundaries",
-                  label = "Show School District Boundaries", 
-                  value = FALSE,
-                  status = "primary"
-                ),
-                h3("Early Learning Hubs"),
-                prettySwitch(
-                  inputId = "hub_location",
-                  label = "Show Locations", 
-                  value = FALSE,
-                  status = "primary"
-                ),
-                prettySwitch(
-                  inputId = "hub_areas",
-                  label = "Show Areas Served", 
-                  value = FALSE,
-                  status = "primary"
-                ),
-                h3("Community Attributes"),
-                # p("To see data about communities, select one of the options below."),
-                pickerInput(
-                  inputId = "community_attribute",
-                  width = "90%",
-                  label = NULL, 
-                  choices = community_attributes_vector,
-                  selected = "Diversity Index"
-                )
                 
   )
 )

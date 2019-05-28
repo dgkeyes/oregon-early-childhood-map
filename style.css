@@ -7,7 +7,7 @@ body {
 
 .panel-default{
   border: none;
-  padding: 25px;
+  padding: 15px 25px;
 }
 
 h1 {
@@ -28,13 +28,13 @@ h3 {
   font-weight: 700;
 }
 
-h4 {
-    font-size: 13px;
-    font-weight: normal;
+h4.panel-title {
+    font-size: 16px;
     letter-spacing: 0.5px;
-    text-transform: uppercase;
-    color: #afb5bc;
+    text-transform: none;
+    color: #ffffff;
 }
+
 
 .section {
   font-size: 20px;
