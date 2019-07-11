@@ -1,0 +1,12 @@
+name: oregon-early-childhood-map-new
+title: oregon-early-childhood-map-new
+username:
+account: davidgkeyes
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 968007
+bundleId: 2154285
+url: https://davidgkeyes.shinyapps.io/oregon-early-childhood-map-new/
+when: 1560541279.50745
+asMultiple: FALSE
+asStatic: FALSE
