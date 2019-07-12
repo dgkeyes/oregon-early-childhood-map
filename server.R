@@ -54,35 +54,34 @@ server <- function(input, output) {
     }
   })
   
+  icons <- awesomeIcons(
+    icon = 'graduation-cap',
+    iconColor = "white",
+    library = 'fa',
+    markerColor = "green"
+  )
+
   
-  output$map <- renderMapdeck(
-    mapdeck(style = mapdeck_style("light"),
-            token = "pk.eyJ1IjoiZGdrZXllcyIsImEiOiJ2WGFJQ2U0In0.ftoZlfudaEIJL7OEf-Mw3Q",
-            pitch = 15) %>%
-      add_sf(data = community_attributes_filtered(),
-             fill_colour = "value",
-             fill_opacity = 200,
-             # auto_highlight = TRUE,
-             # highlight_colour = "#ffffff00",
-             tooltip = "value",
-             legend = TRUE,
-             palette = "blues",
-             legend_options = list(title = community_attributes_filtered()$measure),
-             na_colour = "#eeeeee") %>%
-      add_scatterplot(data = child_care_facilities_filtered(),
-                      radius_min_pixels = 5,
-                      radius_max_pixels = 10,
-                      tooltip = "location",
-                      fill_colour = oregon_orange,
-                      fill_opacity = 100) %>%
-      # add_sf(data = school_district_boundaries_filtered(),
-      #        fill_opacity = 100,
-      #        auto_highlight = TRUE,
-      #        highlight_colour = "#ffffff99",
-      #        stroke_colour = "#000000",
-      #        stroke_width = 100) %>%
-      mapdeck_view(zoom = 6,
-                   location = c(-122.75, 44.055043))
+  output$map <- renderLeaflet(
+  leaflet() %>% 
+    addProviderTiles(providers$CartoDB.Positron) %>% 
+    setView(lng = -122.75, lat = 44.055043, zoom = 6) %>% 
+    addAwesomeMarkers(data = child_care_facilities_filtered(),
+               clusterOptions = markerClusterOptions(),
+               icon = icons,
+               popup = ~popup_content) %>% 
+    # addPolygons(data = school_district_boundaries_filtered()) %>% 
+    addPolygons(data = community_attributes_filtered(),
+                weight = 0,
+                color = "transparent",
+                opacity = 1,
+                label = ~plot_label,
+                highlightOptions = highlightOptions(color = "white", 
+                                                    weight = 2,
+                                                    bringToFront = TRUE),
+                fillColor = ~colorNumeric("Blues", value)(value))
+   
+  
     
   )
   

@@ -132,7 +132,8 @@ median_age <- get_acs(geography = "tract",
 #   clean_names()
 
 community_attributes <- bind_rows(median_income,
-                                  median_age) 
+                                  median_age) %>% 
+  mutate(plot_label = glue("{measure}: {plot_label}"))
 
 write_csv(community_attributes, "data-clean/community-attributes.csv")
 
@@ -152,14 +153,4 @@ write_csv(community_attributes, "data-clean/community-attributes.csv")
 
 # write_csv(community_attributes_wide, "data-clean/community-attributes-wide.csv")
 
-library(leaflet)
-
-leaflet() %>% 
-  addProviderTiles(providers$CartoDB.Positron) %>% 
-  setView(lng = -122.75, lat = 44.055043, zoom = 6) %>% 
-  addMarkers(data = child_care_facilities,
-             clusterOptions = markerClusterOptions()) %>% 
-  addPolygons(data = filter(community_attributes, measure == "Median Income"),
-              weight = 0,
-              fillColor = ~colorNumeric("Blues", value, domain = 1:150000)(value))
 

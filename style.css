@@ -135,6 +135,7 @@
 
 body {
   font-family: 'Inter', sans-serif;
+  font-size: 16px;
 }
 
 
@@ -194,3 +195,24 @@ h4.panel-title {
     color: #afb5bc;
 }
 */
+
+
+/* Leaflet */
+
+.leaflet-popup-content h2 {
+  padding-left: 0;
+}
+
+.leaflet-container {
+    font-size: 16px;
+}
+
+div.outer {
+  position: fixed;
+  top: 41px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  padding: 0;
+}
