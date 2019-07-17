@@ -13,6 +13,7 @@ library(glue)
 
 community_attributes_vector <- read_csv("data-clean/community-attributes.csv") %>% 
   distinct(measure) %>% 
+  arrange(measure) %>% 
   pull(measure)
 
 options(tigris_class = "sf",
@@ -29,10 +30,9 @@ oregon_census_tracts <- tracts(state = "Oregon",
 school_district_boundaries <- st_read("data-clean/school-district-boundaries.shp")
 
 community_attributes <- read_csv("data-clean/community-attributes.csv") %>%
-  rename("tract_id" = "geoid",
-         "value" = "estimate") %>% 
   mutate(tract_id = as.character(tract_id)) %>%
   right_join(oregon_census_tracts, by = c("tract_id" = "geoid")) %>%
+  # mutate(plot_label = glue("{plot_label}")) %>% 
   st_as_sf()
 
 

@@ -77,10 +77,26 @@ st_write(school_district_boundaries, "data-clean/school-district-boundaries.shp"
 # Schools -----------------------------------------------------------------
 
 
-# Community Attributes ----------------------------------------------------
+# COMMUNITY ATTRIBUTES ----------------------------------------------------
 
+dk_set_community_attribute_names <- function(.data) {
+  .data %>% 
+    set_names(c("measure", "tract_id", "value", "label")) 
+}
+
+
+# Get all vars
 
 v17 <- load_variables(2017, "acs5", cache = TRUE)
+
+
+# Median Household Income with Children Under Age 18 ----------------------
+
+# DK: Don't think this is possible. Did median income instead.
+
+v17 %>% 
+  filter(str_detect(concept, "MEDIAN INCOME")) %>% 
+  distinct(concept)
 
 median_income <- get_acs(geography = "tract",
                          year = 2017,
@@ -89,68 +105,101 @@ median_income <- get_acs(geography = "tract",
                          variables = (median_income = "B19013_001")) %>% 
   clean_names() %>% 
   mutate(plot_label = dollar(estimate)) %>% 
-  mutate(measure = "Median Income") 
+  mutate(measure = "Median Income") %>% 
+  select(measure, geoid, estimate, plot_label) %>% 
+  dk_set_community_attribute_names() %>% 
+  view()
+
+
+# Population Under Age 18 -------------------------------------------------
+
+v17 %>% 
+  filter(str_detect(name, "B06001")) %>% 
+  distinct(name) %>% 
+  pull(name)
+
+population_under_18 <- get_acs(geography = "tract",
+                               year = 2017,
+                               survey = "acs5",
+                               state = "OR",
+                               summary_var = "B06001_001",
+                               variables = c("Under 5" = "B06001_002",
+                                             "5 to 17" = "B06001_003")) %>% 
+  clean_names() %>% 
+  group_by(geoid) %>% 
+  summarize(under_18_pop = sum(estimate),
+            total_pop = sum(summary_est)) %>% 
+  mutate(under_18_pop_pct = under_18_pop / total_pop) %>% 
+  mutate(plot_label = percent(under_18_pop_pct, 0.1)) %>% 
+  mutate(measure = "Population Under Age 18") %>% 
+  select(measure, geoid, under_18_pop_pct, plot_label) %>%
+  dk_set_community_attribute_names() %>% 
+  view()
+  
+
+# Median Age --------------------------------------------------------------
 
 median_age <- get_acs(geography = "tract",
-                         year = 2017,
-                         survey = "acs5",
-                         state = "OR",
-                         variables = "B01002_001") %>% 
-  clean_names() %>% 
-  mutate(plot_label = as.character(estimate)) %>% 
-  mutate(measure = "Median Age")
+                      year = 2017,
+                      survey = "acs5",
+                      state = "OR",
+                      variables = "B01002_001") %>%
+  clean_names() %>%
+  mutate(plot_label = number(estimate, 0.1)) %>%
+  mutate(measure = "Median Age") %>%
+  select(measure, geoid, estimate, plot_label) %>%
+  dk_set_community_attribute_names()
 
 
+# Medical Assistance Program Recipients -----------------------------------
+
+# DK: Not sure if this exists in census data
 
 
+# Children in Paid Foster Care --------------------------------------------
 
 
-# diversity_index <- read_csv("data-raw/diversity-index.csv") %>% 
-#   clean_names() %>% 
-#   mutate(tract_id = as.character(geoid10)) %>% 
-#   select(tract_id, county, divindx_cy) %>% 
-#   rename("value" = "divindx_cy") %>%
-#   mutate(measure = "Diversity Index")
-# 
-# 
-# median_household_income <- read_csv("data-raw/median-household-income.csv") %>% 
-#   clean_names() %>% 
-#   mutate(tract_id = as.character(geoid10)) %>% 
-#   select(tract_id, county, w_ch18) %>% 
-#   rename("value" = "w_ch18") %>%
-#   mutate(measure = "Median Household Income") 
-# 
-# population_under_18 <- read_csv("data-raw/population-under-18.csv") %>% 
-#   clean_names() %>% 
-#   mutate(tract_id = as.character(geoid10)) %>% 
-#   select(tract_id, county, pop18under_pct) %>% 
-#   rename("value" = "pop18under_pct") %>%
-#   mutate(measure = "Population Under 18") 
+# DK: Not sure how to do this
 
-# oregon_census_tracts <- tracts(state = "Oregon",
-#                                cb = TRUE) %>% 
-#   clean_names()
+v17 %>% 
+  filter(str_detect(label, "Foster")) %>% 
+  DT::datatable()
+
+
+# Snap Recipients ---------------------------------------------------------
+
+v17 %>% 
+  filter(str_detect(name, "B09010")) %>% 
+  DT::datatable()
+
+# DK: Variable is RECEIPT OF SUPPLEMENTAL SECURITY INCOME (SSI), CASH PUBLIC ASSISTANCE INCOME, OR FOOD STAMPS/SNAP IN THE PAST 12 MONTHS BY HOUSEHOLD TYPE FOR CHILDREN UNDER 18 YEARS IN HOUSEHOLDS
+
+snap_recipients <- get_acs(geography = "tract",
+                           year = 2017,
+                           survey = "acs5",
+                           state = "OR",
+                           summary_var = "B09010_001",
+                           variables = "B09010_002") %>%
+  clean_names() %>%
+  mutate(tanf_pct = estimate / summary_est) %>% 
+  mutate(plot_label = percent(tanf_pct, 0.1)) %>% 
+  mutate(measure = "TANF Households") %>% 
+  select(measure, geoid, tanf_pct, plot_label) %>%
+  dk_set_community_attribute_names() %>% 
+  view()
+
+
+# Create and write community_attributes data frame ------------------------
 
 community_attributes <- bind_rows(median_income,
+                                  population_under_18,
+                                  snap_recipients,
                                   median_age) %>% 
-  mutate(plot_label = glue("{measure}: {plot_label}"))
+  mutate(plot_label = glue("{measure}: {label}"))
+
 
 write_csv(community_attributes, "data-clean/community-attributes.csv")
 
-# community_attributes_geodata <- left_join(oregon_census_tracts,
-#                                           community_attributes, 
-#                                           by = "geoid") %>% 
-#   rename("tract_id" = "geoid",
-#          "value" = "estimate")
 
-# write_sf(community_attributes_geodata, "data-clean/community-attributes.shp")
-
-# community_attributes_wide <- diversity_index %>% 
-#   left_join(median_household_income, by = "tract_id") %>% 
-#   left_join(population_under_18, by = "tract_id") %>% 
-#   select(tract_id, county, divindx_cy, w_ch18, pop18under_pct) %>% 
-#   set_names(c("tract_id", "county", "Diversity Index", "Median Household Income", "Population Under 18"))
-
-# write_csv(community_attributes_wide, "data-clean/community-attributes-wide.csv")
 
 

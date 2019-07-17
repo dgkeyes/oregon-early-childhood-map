@@ -135,7 +135,7 @@
 
 body {
   font-family: 'Inter', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 
@@ -215,4 +215,9 @@ div.outer {
   bottom: 0;
   overflow: hidden;
   padding: 0;
+}
+
+.navbar-brand::before {
+  content: '';
+  background-image: url("/images/eld-logo.png");
 }
