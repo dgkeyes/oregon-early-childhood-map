@@ -69,8 +69,8 @@ navbarPage("Oregon Early Childhood Needs Assessment", id = "nav",
                                                       awesomeCheckboxGroup(inputId = "qris_input",
                                                                            label = "Spark Rating",
                                                                            inline = TRUE,
-                                                                           choices = c("1", "2", "3", "4", "5", "No Rating"),
-                                                                           selected = c("1", "2", "3", "4", "5", "No Rating")),
+                                                                           choices = c("C2Q", "3", "4", "5", "No Rating"),
+                                                                           selected = c("C2Q", "3", "4", "5", "No Rating")),
                                                       awesomeCheckboxGroup(inputId = "other",
                                                                            label = "Other",
                                                                            inline = TRUE,
@@ -84,20 +84,20 @@ navbarPage("Oregon Early Childhood Needs Assessment", id = "nav",
                                         bs_append(title = "Systems",
                                                   content =  list(
                                                     p("Early Learning Hubs"),
-                                                  prettySwitch(
-                                                    inputId = "hub_location",
-                                                    label = "Show Locations",
-                                                    value = FALSE,
-                                                    status = "primary"
-                                                  ),
-                                                  prettySwitch(
-                                                    inputId = "hub_areas",
-                                                    label = "Show Areas Served",
-                                                    value = FALSE,
-                                                    status = "primary"
-                                                  ))) %>% 
+                                                    prettySwitch(
+                                                      inputId = "hub_location",
+                                                      label = "Show Locations",
+                                                      value = FALSE,
+                                                      status = "primary"
+                                                    ),
+                                                    prettySwitch(
+                                                      inputId = "hub_areas",
+                                                      label = "Show Areas Served",
+                                                      value = FALSE,
+                                                      status = "primary"
+                                                    ))) %>% 
                                         bs_append(title = "Schools", content = list(
-                                          p("Kindergarten Readiness Assessment Results"),
+                                          p("Oregon Kindergarten Readiness Assessment Results"),
                                           awesomeRadio(
                                             inputId = "kindergarten_assessment",
                                             label = NULL,

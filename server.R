@@ -72,7 +72,7 @@ server <- function(input, output) {
     
     leaflet() %>% 
       addProviderTiles(providers$CartoDB.Positron) %>% 
-      setView(lng = -122.75, lat = 44.055043, zoom = 6) %>% 
+      setView(lng = -122.75, lat = 44.055043, zoom = 6) %>%
       addAwesomeMarkers(data = child_care_facilities_filtered(),
                         clusterOptions = markerClusterOptions(),
                         icon = icons,

@@ -1,0 +1,51 @@
+---
+title: "Phase 1 Tables"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r}
+library(tidyverse)
+library(tidycensus)
+library(sf)
+library(DT)
+```
+
+```{r}
+v17 <- load_variables(2017, "acs5", cache = TRUE)
+
+v17 %>% 
+  datatable()
+  
+```
+
+# Children age 5 and Under by Race and Ethnicity
+
+# Children age 5 and Under by Household Income
+
+Search for "POVERTY STATUS IN THE PAST 12 MONTHS BY SEX BY AGE"
+
+# Number of Children age 5 and Under
+
+B09001_001
+
+# Children age 5 and Under by Household Type
+
+Search for "OWN CHILDREN UNDER 18 YEARS BY FAMILY TYPE AND AGE"
+
+# Children age 5 and Under by Household Size
+
+# Children age 5 and Under by Urbanicity
+
+- Chicago does age and race for counties and then converts counties to urban/suburban/rural
+
+# Parents with children age 5 and Under by education attainment
+
+# Children age 5 and Under by Nativity and Citizenship Status
+
+# Parents with Children age 5 and Under by Nativity and Citizenship Status
+
+# Children age 5 and Under by Primary Language

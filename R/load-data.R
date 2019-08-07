@@ -49,6 +49,8 @@ child_care_facilities <- read_csv("data-clean/child-care-facilities-geocoded.csv
   drop_na(lon, lat) %>%
   replace_na(list(facility_name = "Name not public",
                   qris_stars = "No Rating")) %>%
+  mutate(qris_stars = case_when(qris_stars == "2" ~ "C2Q",
+                                TRUE ~ qris_stars)) %>% 
   mutate(regulation_status = case_when(
     regulation_status == "Register" ~ "Registered",
     TRUE ~ regulation_status

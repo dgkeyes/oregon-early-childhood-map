@@ -189,13 +189,47 @@ snap_recipients <- get_acs(geography = "tract",
   view()
 
 
+# Race/Ethnicity ----------------------------------------------------------
+
+race_ethnicity <- get_acs(geography = "tract",
+                          year = 2017,
+                          survey = "acs5",
+                          state = "OR",
+                          variables = c(White = "B01001A_003",
+                                        White = "B01001A_018",
+                                        `African American` = "B01001B_003",
+                                        `African American` = "B01001B_018",
+                                        `American Indian and Alaska Native` = "B01001C_003",
+                                        `American Indian and Alaska Native` = "B01001C_018",
+                                        Asian = "B01001D_003",
+                                        Asian = "B01001D_018",
+                                        `Native Hawaiian and Other Pacific Islander` = "B01001E_003",
+                                        `Native Hawaiian and Other Pacific Islander` = "B01001E_018",
+                                        `Other Race` = "B01001F_003",
+                                        `Other Race` = "B01001F_018",
+                                        `Two or More Races` = "B01001G_003",
+                                        `Two or More Races` = "B01001G_018",
+                                        `Hispanic or Latino` = "B01001I_003",
+                                        `Hispanic or Latino` = "B01001I_018")) %>% 
+  clean_names() %>% 
+  mutate(measure = str_glue("Race/Ethnicity: {variable}")) %>% 
+  rename("tract_id" = "geoid",
+         "value" = "estimate") %>% 
+  mutate(label = value) %>% 
+  select(measure, tract_id, value, label) %>% 
+  mutate(measure = as.character(measure)) %>% 
+  mutate(label = as.character(label))
+
+
 # Create and write community_attributes data frame ------------------------
 
 community_attributes <- bind_rows(median_income,
                                   population_under_18,
                                   snap_recipients,
-                                  median_age) %>% 
-  mutate(plot_label = glue("{measure}: {label}"))
+                                  median_age,
+                                  race_ethnicity) %>% 
+  mutate(measure_sentence_case = str_to_sentence(measure)) %>% 
+  mutate(plot_label = str_glue("{measure_sentence_case} in this census tract: {label}"))
 
 
 write_csv(community_attributes, "data-clean/community-attributes.csv")
