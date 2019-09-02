@@ -5,8 +5,8 @@ account: davidgkeyes
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 956599
-bundleId: 2280790
+bundleId: 2324111
 url: https://davidgkeyes.shinyapps.io/oregon-early-childhood-map/
-when: 1564598629.61175
+when: 1565913982.20925
 asMultiple: FALSE
 asStatic: FALSE

@@ -7,7 +7,6 @@ library(janitor)
 library(sf)
 library(mapdeck)
 library(shinyWidgets)
-library(shinyjs)
 library(bsplus)
 
 
@@ -32,8 +31,6 @@ navbarPage("Oregon Early Childhood Needs Assessment", id = "nav",
                         
                         leafletOutput(outputId = "map",
                                       height = "100%"),
-                        
-                        
                         absolutePanel(id = "controls",
                                       class = "panel panel-default",
                                       fixed = TRUE,
@@ -59,21 +56,29 @@ navbarPage("Oregon Early Childhood Needs Assessment", id = "nav",
                                                                       by = 1),
                                                         select = c(min(child_care_facilities$capacity, na.rm = TRUE),
                                                                    max(child_care_facilities$capacity, na.rm = TRUE)),
-                                                        width = "90%"
+                                                        width = "70%"
                                                       ),
-                                                      awesomeCheckboxGroup(inputId = "regulation_status",
-                                                                           label = "Regulation Status",
+                                                      pickerInput(inputId = "regulation_status",
+                                                                  label = "Regulation Status",
+                                                                  choices = c("Registered", "Certified", "Exempt", "Recorded"),
+                                                                  selected = c("Registered", "Certified", "Exempt", "Recorded"),
+                                                                  multiple = TRUE,
+                                                                  options = list(
+                                                                    `actions-box` = TRUE,
+                                                                    title = "Please select an option ...")),
+                                                      awesomeCheckboxGroup(inputId = "facility_location",
+                                                                           label = "Facility Location",
                                                                            inline = TRUE,
-                                                                           choices = c("Registered", "Certified", "Exempt", "Recorded"),
-                                                                           selected = c("Registered", "Certified", "Exempt", "Recorded")),
+                                                                           choices = c("Home-Based", "Center-Based"),
+                                                                           selected = c("Home-Based", "Center-Based")),
                                                       awesomeCheckboxGroup(inputId = "qris_input",
                                                                            label = "Spark Rating",
                                                                            inline = TRUE,
                                                                            choices = c("C2Q", "3", "4", "5", "No Rating"),
                                                                            selected = c("C2Q", "3", "4", "5", "No Rating")),
                                                       awesomeCheckboxGroup(inputId = "other",
-                                                                           label = "Other",
-                                                                           inline = TRUE,
+                                                                           label = "Also Show",
+                                                                           # inline = TRUE,
                                                                            choices = c("Accepts DHS",
                                                                                        "Head Start",
                                                                                        "Relief Nursery"),
@@ -115,13 +120,33 @@ navbarPage("Oregon Early Childhood Needs Assessment", id = "nav",
                                           )
                                           
                                         )) %>%
-                                        bs_append(title = "Communities",
-                                                  content =  awesomeRadio(
-                                                    inputId = "community_attribute",
-                                                    width = "90%",
-                                                    label = NULL,
-                                                    choices = community_attributes_vector
-                                                  ))
+                                        # bs_append(title = "Communities",
+                                        #           content =  pickerInput(
+                                        #             inputId = "community_attribute",
+                                        #             # width = "90%",
+                                        #             label = NULL,
+                                        #             choices = community_attributes_vector
+                                        #           ))
+                                      bs_append(title = "Communities",
+                                                content =  pickerInput(
+                                                  inputId = "community_attribute",
+                                                  # width = "90%",
+                                                  label = NULL,
+                                                  # options = list(
+                                                  #   title = "Please select one ..."
+                                                  # ),
+                                                  choices = list(
+                                                    `Race/Ethnicity` = community_attributes_race_ethnicity,
+                                                    `Language` = community_attributes_language,
+                                                    `Other Measures` = community_attributes_non_race_ethnicity
+                                                  )))
+                                      # bs_append(title = "Communities",
+                                      #           content =  awesomeRadio(
+                                      #             inputId = "community_attribute",
+                                      #             width = "90%",
+                                      #             label = NULL,
+                                      #             choices = community_attributes_vector
+                                      #           ))
                                       
                                       
                                       
