@@ -7,6 +7,8 @@ library(janitor)
 library(sf)
 library(shinyjs)
 library(leaflet)
+library(mapdeck)
+library(scales)
 
 
 # Colors ------------------------------------------------------------------
@@ -30,7 +32,12 @@ mapbox_token <- Sys.getenv("MAPBOX_PUBLIC_TOKEN")
 
 set_token(mapbox_token)
 
+base_radius <- 50
+
 server <- function(input, output) {
+  
+
+# Data --------------------------------------------------------------------
   
   child_care_facilities_filtered <- reactive({
     child_care_facilities %>%
@@ -49,26 +56,31 @@ server <- function(input, output) {
     schools
   })
   
-  # school_district_boundaries_reactive() <- reactive({
-  #   school_district_boundaries
-  # })
-  
-  # school_district_boundaries_reactive() <- reactive({
-  #   if (input$district_boundaries == TRUE) {
-  #     school_district_boundaries
-  #   }
-  #   if (input$district_boundaries == FALSE) {
-  #     school_district_boundaries %>%
-  #       slice(1)
-  #   }
-  # })
+
+  school_district_boundaries_reactive <- reactive({
+    school_district_boundaries
+  })
+
   
   
   
-  child_care_facilities_pal <- colorFactor(
-    palette = c(ode_orange, ode_green), 
-    levels = c("Home-Based", "Center-Based")
-  )
+  
+
+# Output Map --------------------------------------------------------------
+
+
+  
+  output$map <- renderMapdeck({
+    mapdeck(style = mapdeck_style("light"),
+            token = mapbox_token,
+            pitch = 5,
+            zoom = 6,
+            location = c(-122.75, 44.055043)) 
+  })
+  
+
+# Community Attributes ----------------------------------------------------
+
   
   icons <- awesomeIcons(
     icon = 'graduation-cap',
@@ -77,60 +89,98 @@ server <- function(input, output) {
     markerColor = "green"
   )
   
-  output$map <- renderLeaflet(
+  observeEvent({input$community_attribute},{
     
-    leaflet() %>% 
-      addProviderTiles(providers$CartoDB.Positron) %>% 
-      setView(lng = -122.75, lat = 44.055043, zoom = 6) %>%
-      addPolygons(data = community_attributes_filtered(),
-                  group = "Community Attributes",
-                  weight = 0,
-                  color = "transparent",
-                  # opacity = 1,
-                  fillOpacity = .5,
-                  label = ~plot_label,
-                  highlightOptions = highlightOptions(color = "white",
-                                                      weight = 2,
-                                                      bringToFront = FALSE),
-                  fillColor = ~colorNumeric("Blues", value,
-                                            na.color = "#eeeeee")(value)) %>% 
-      addCircles(data = schools_filtered(),
-                 color = ode_magenta,
-                 opacity = 1,
-                 fillOpacity = .7,
-                 radius = 100) %>%
-      addAwesomeMarkers(data = child_care_facilities_filtered(),
-                        clusterOptions = markerClusterOptions(),
-                        icon = icons,
-                        popup = ~popup_content) 
-      # addCircles(data = child_care_facilities_filtered(),
-      #            group = "Child Care Facilities",
-      #            color = ~child_care_facilities_pal(facility_location),
-      #            opacity = 1,
-      #            fillOpacity = .7,
-      #            radius = 100,
-      #            # icon = child_care_icons,
-      #            popup = ~popup_content) 
-      # addPolygons(data = school_district_boundaries_reactive(),
-      #             fillColor = "orange") 
-    # addPolygons(data = early_learning_hubs_regions) %>% 
-    # addMarkers(data = early_learning_hubs_locations) %>% 
+    mapdeck_update(map_id = "map") %>% 
+      add_sf(data = community_attributes_filtered(),
+             fill_colour = "value",
+             fill_opacity = 150,
+             auto_highlight = FALSE,
+             highlight_colour = "#ffffff99",
+             tooltip = "plot_label",
+             legend = TRUE,
+             palette = "blues",
+             update_view = FALSE,
+             # legend_format = list( fill_colour = percent_format ),
+             legend_options = list(title = community_attributes_filtered()$measure,
+                                   digits = 1),
+             na_colour = "#fafafa") 
+
     
-    # addLayersControl(overlayGroups = c("Child Care Facilities",
-    #                                    "Community Attributes") ,
-    #                  position = "bottomright",
-    #                  options = layersControlOptions(collapsed = FALSE))
-    # addLegend("bottomright", 
-    #           pal = pal, 
-    #           values = ~value,
-    #           # title = "Est. GDP (2010)",
-    #           # labFormat = labelFormat(prefix = "$"),
-    #           opacity = 1
-    # )
+  })
+  
+
+# District Boundaries -----------------------------------------------------
+
+  
+  
+  observeEvent({input$district_boundaries},{
+    
+    if (input$district_boundaries == TRUE) {
+      mapdeck_update(map_id = "map") %>% 
+        add_sf(data = school_district_boundaries_reactive(),
+               fill_opacity = 1,
+               fill_colour = "transparent",
+               auto_highlight = TRUE,
+               highlight_colour = paste0(ode_green, "25"),
+               stroke_colour = ode_green,
+               stroke_width = 75,
+               tooltip = "name",
+               update_view = FALSE,
+               layer_id = "school_districts")
+    } else {
+      mapdeck_update(map_id = "map") %>% 
+        clear_path(layer_id = "school_districts")
+    }
+    
+  })
+  
+
+# Early Learning Programs -------------------------------------------------
+
+  
+  
+  observeEvent({c(input$capacity, input$regulation_status, input$facility_location, input$qris_input)},{
+    
+    mapdeck_update(map_id = "map") %>% 
+      add_scatterplot(data = child_care_facilities_filtered(),
+                      radius_max_pixels = base_radius / 10,
+                      radius_min_pixels = base_radius / 30,
+                      radius = base_radius,
+                      tooltip = "popup_content",
+                      # fill_colour = "facility_location",
+                      fill_colour = ode_orange,
+                      auto_highlight = TRUE,
+                      update_view = FALSE,
+                      layer_id = "child_care_facilities_layer") 
     
     
+  })
+  
+
+# Schools -----------------------------------------------------------------
+
+  
+  
+  observeEvent({input$show_schools},{
     
-  )
+    if (input$show_schools == TRUE) {
+      mapdeck_update(map_id = "map") %>% 
+        add_scatterplot(data = schools_filtered(),
+                        fill_colour = ode_green,
+                        fill_opacity = 150,
+                        radius_max_pixels = base_radius / 5,
+                        radius = base_radius * 2,
+                        tooltip = "popup_content",
+                        update_view = FALSE,
+                        layer_id = "schools_layer")
+      
+    } else{
+      mapdeck_update(map_id = "map") %>% 
+        clear_path(layer_id = "schools_layer")
+    }
+    
+  })
   
 }
 

@@ -153,6 +153,39 @@ body {
 }
 
 
+#dk_accordion-0-heading {
+    color: #fff;
+    background-color: #808080;
+    border-color: #808080;
+}
+
+#dk_accordion-1-heading {
+    color: #fff;
+    background-color: #e26b2a;
+    border-color: #e26b2a;
+}
+
+#dk_accordion-2-heading {
+    color: #fff;
+    background-color: #9f2065;
+    border-color: #9f2065;
+}
+
+#dk_accordion-3-heading {
+    color: #fff;
+    background-color: #408740;
+    border-color: #408740;
+}
+
+#dk_accordion-4-heading {
+    color: #fff;
+    background-color: #1b75bc;
+    border-color: #1b75bc;
+}
+
+
+
+
 h1 {
   font-size: 24px;
   font-weight: 700;

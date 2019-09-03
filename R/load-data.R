@@ -26,9 +26,16 @@ oregon_census_tracts <- tracts(state = "Oregon",
 # Schools -----------------------------------------------------------------
 
 schools <- read_csv("data-clean/oregon-schools.csv") %>% 
+  # Get rid of anything but elementary schools + others with KA scores
+  drop_na(institution_name) %>% 
+  # Create popup content
+  mutate(popup_content = glue("<h2>{name}</h2>
+                              <p>{street_city} {county.x}</p>
+                              Approaches to Learning: {approaches_to_learning_total_score_score}")) %>% 
   st_as_sf(coords = c("lon", "lat"))
 
-  
+
+
 # School District Boundaries ----------------------------------------------
 
 
@@ -62,7 +69,7 @@ child_care_facilities <- read_csv("data-clean/child-care-facilities-geocoded.csv
 # Early Learning Hubs -----------------------------------------------------
 
 early_learning_hubs_locations <- read_csv("data-clean/early-learning-hubs-locations.csv")
-  
+
 early_learning_hubs_regions <- read_csv("data-clean/early-learning-hubs-regions.csv")
 
 early_learning_hubs_regions <- counties(state = "Oregon",
