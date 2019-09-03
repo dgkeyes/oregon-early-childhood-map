@@ -49,9 +49,9 @@ server <- function(input, output) {
     schools
   })
   
-  school_district_boundaries_reactive() <- reactive({
-    school_district_boundaries
-  })
+  # school_district_boundaries_reactive() <- reactive({
+  #   school_district_boundaries
+  # })
   
   # school_district_boundaries_reactive() <- reactive({
   #   if (input$district_boundaries == TRUE) {
@@ -100,9 +100,9 @@ server <- function(input, output) {
                  fillOpacity = .7,
                  radius = 100,
                  # icon = child_care_icons,
-                 popup = ~popup_content) %>% 
-    addPolygons(data = school_district_boundaries_reactive(),
-                fillColor = "orange") 
+                 popup = ~popup_content) 
+    # addPolygons(data = school_district_boundaries_reactive(),
+    #             fillColor = "orange") 
     # addPolygons(data = early_learning_hubs_regions) %>% 
     # addMarkers(data = early_learning_hubs_locations) %>% 
 
