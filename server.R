@@ -70,6 +70,12 @@ server <- function(input, output) {
     levels = c("Home-Based", "Center-Based")
   )
   
+  icons <- awesomeIcons(
+    icon = 'graduation-cap',
+    iconColor = "white",
+    library = 'fa',
+    markerColor = "green"
+  )
   
   output$map <- renderLeaflet(
     
@@ -93,19 +99,23 @@ server <- function(input, output) {
                  opacity = 1,
                  fillOpacity = .7,
                  radius = 100) %>%
-      addCircles(data = child_care_facilities_filtered(),
-                 group = "Child Care Facilities",
-                 color = ~child_care_facilities_pal(facility_location),
-                 opacity = 1,
-                 fillOpacity = .7,
-                 radius = 100,
-                 # icon = child_care_icons,
-                 popup = ~popup_content) 
-    # addPolygons(data = school_district_boundaries_reactive(),
-    #             fillColor = "orange") 
+      addAwesomeMarkers(data = child_care_facilities_filtered(),
+                        clusterOptions = markerClusterOptions(),
+                        icon = icons,
+                        popup = ~popup_content) 
+      # addCircles(data = child_care_facilities_filtered(),
+      #            group = "Child Care Facilities",
+      #            color = ~child_care_facilities_pal(facility_location),
+      #            opacity = 1,
+      #            fillOpacity = .7,
+      #            radius = 100,
+      #            # icon = child_care_icons,
+      #            popup = ~popup_content) 
+      # addPolygons(data = school_district_boundaries_reactive(),
+      #             fillColor = "orange") 
     # addPolygons(data = early_learning_hubs_regions) %>% 
     # addMarkers(data = early_learning_hubs_locations) %>% 
-
+    
     # addLayersControl(overlayGroups = c("Child Care Facilities",
     #                                    "Community Attributes") ,
     #                  position = "bottomright",
