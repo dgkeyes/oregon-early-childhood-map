@@ -7,6 +7,8 @@ library(janitor)
 library(sf)
 library(shinyjs)
 library(leaflet)
+library(mapdeck)
+library(scales)
 
 
 # Colors ------------------------------------------------------------------
@@ -49,15 +51,15 @@ server <- function(input, output) {
     schools
   })
   
-  school_district_boundaries_reactive() <- reactive({
+  school_district_boundaries_reactive <- reactive({
     school_district_boundaries
   })
   
-  # school_district_boundaries_reactive() <- reactive({
+  # school_district_boundaries_reactive <- reactive({
   #   if (input$district_boundaries == TRUE) {
   #     school_district_boundaries
   #   }
-  #   if (input$district_boundaries == FALSE) {
+  #   else (input$district_boundaries == FALSE) {
   #     school_district_boundaries %>%
   #       slice(1)
   #   }
@@ -65,62 +67,65 @@ server <- function(input, output) {
   
   
   
-  child_care_facilities_pal <- colorFactor(
-    palette = c(ode_orange, ode_green), 
-    levels = c("Home-Based", "Center-Based")
-  )
+  
+  output$map <- renderMapdeck({
+    mapdeck(style = mapdeck_style("light"),
+            token = mapbox_token,
+            pitch = 5,
+            zoom = 6,
+            location = c(-122.75, 44.055043)) 
+  })
+  
+  observeEvent({input$community_attribute},{
+    
+    mapdeck_update(map_id = "map") %>% 
+      add_sf(data = community_attributes_filtered(),
+             fill_colour = "value",
+             fill_opacity = 75,
+             auto_highlight = FALSE,
+             highlight_colour = "#ffffff99",
+             tooltip = "plot_label",
+             legend = TRUE,
+             palette = "blues",
+             update_view = FALSE,
+             # legend_format = list( fill_colour = percent_format ),
+             legend_options = list(title = community_attributes_filtered()$measure,
+                                   digits = 1),
+             na_colour = "#fafafa") %>% 
+      add_scatterplot(data = schools_filtered(),
+                      fill_colour = paste0(ode_magenta, "99"),
+                      radius_max_pixels = 5,
+                      radius_min_pixels = 250,
+                      radius = 250,
+                      tooltip = "popup_content",
+                      layer_id = "schools") %>% 
+      add_scatterplot(data = child_care_facilities_filtered(),
+                      radius_max_pixels = 5,
+                      radius_min_pixels = 25,
+                      radius = 250,
+                      tooltip = "popup_content",
+                      fill_colour = "facility_location",
+                      palette = "cividis",
+                      auto_highlight = TRUE,
+                      update_view = FALSE,
+                      layer_id = "child_care_facilities_layer") 
+      # add_sf(data = school_district_boundaries_reactive(),
+      #        fill_opacity = 1,
+      #        fill_colour = "transparent",
+      #        auto_highlight = TRUE,
+      #        highlight_colour = "#9f206525",
+      #        stroke_colour = ode_magenta,
+      #        stroke_width = 75,
+      #        tooltip = "name",
+      #        update_view = FALSE,
+      #        layer_id = "school_districts") 
+ 
+      
+    
+  })
   
   
-  output$map <- renderLeaflet(
-    
-    leaflet() %>% 
-      addProviderTiles(providers$CartoDB.Positron) %>% 
-      setView(lng = -122.75, lat = 44.055043, zoom = 6) %>%
-      addPolygons(data = community_attributes_filtered(),
-                  group = "Community Attributes",
-                  weight = 0,
-                  color = "transparent",
-                  # opacity = 1,
-                  fillOpacity = .5,
-                  label = ~plot_label,
-                  highlightOptions = highlightOptions(color = "white",
-                                                      weight = 2,
-                                                      bringToFront = FALSE),
-                  fillColor = ~colorNumeric("Blues", value,
-                                            na.color = "#eeeeee")(value)) %>% 
-      addCircles(data = schools_filtered(),
-                 color = ode_magenta,
-                 opacity = 1,
-                 fillOpacity = .7,
-                 radius = 100) %>%
-      addCircles(data = child_care_facilities_filtered(),
-                 group = "Child Care Facilities",
-                 color = ~child_care_facilities_pal(facility_location),
-                 opacity = 1,
-                 fillOpacity = .7,
-                 radius = 100,
-                 # icon = child_care_icons,
-                 popup = ~popup_content) %>% 
-    addPolygons(data = school_district_boundaries_reactive(),
-                fillColor = "orange") 
-    # addPolygons(data = early_learning_hubs_regions) %>% 
-    # addMarkers(data = early_learning_hubs_locations) %>% 
-
-    # addLayersControl(overlayGroups = c("Child Care Facilities",
-    #                                    "Community Attributes") ,
-    #                  position = "bottomright",
-    #                  options = layersControlOptions(collapsed = FALSE))
-    # addLegend("bottomright", 
-    #           pal = pal, 
-    #           values = ~value,
-    #           # title = "Est. GDP (2010)",
-    #           # labFormat = labelFormat(prefix = "$"),
-    #           opacity = 1
-    # )
-    
-    
-    
-  )
+  
   
 }
 

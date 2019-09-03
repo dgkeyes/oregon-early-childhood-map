@@ -38,26 +38,26 @@ school_enrollment <- read_excel("data-raw/school-enrollment-1819.xlsx",
 # 
 # file_delete("data-raw/oregon-schools-1819.zip")
 
-oregon_schools <- read_excel("data-raw/oregon-schools-1819.xls") %>% 
-  clean_names() %>% 
-  mutate(iid = as.numeric(iid)) %>% 
-  inner_join(school_enrollment, by = c("iid" = "attending_school_institutional_id")) %>% 
-  distinct(iid, .keep_all = TRUE) %>% 
-  select(-c(x2018_19_kindergarten:x2018_19_grade_twelve)) %>% 
-  select(-c(directory_name:geo_areatype)) %>% 
-  select(-contains("mail")) %>% 
-  select(-contains("phone")) %>% 
-  select(-street_str_addr2) %>% 
-  select(-director_name) %>% 
-  mutate(address = paste(street_str_addr1,
-                         street_city,
-                         street_state,
-                         street_zip)) %>%
-  mutate_geocode(address) 
-
-write_csv(oregon_schools, 
-          "data-clean/oregon-schools.csv",
-          na = "")
+# oregon_schools <- read_excel("data-raw/oregon-schools-1819.xls") %>% 
+#   clean_names() %>% 
+#   mutate(iid = as.numeric(iid)) %>% 
+#   inner_join(school_enrollment, by = c("iid" = "attending_school_institutional_id")) %>% 
+#   distinct(iid, .keep_all = TRUE) %>% 
+#   select(-c(x2018_19_kindergarten:x2018_19_grade_twelve)) %>% 
+#   select(-c(directory_name:geo_areatype)) %>% 
+#   select(-contains("mail")) %>% 
+#   select(-contains("phone")) %>% 
+#   select(-street_str_addr2) %>% 
+#   select(-director_name) %>% 
+#   mutate(address = paste(street_str_addr1,
+#                          street_city,
+#                          street_state,
+#                          street_zip)) %>%
+#   mutate_geocode(address) 
+#
+# write_csv(oregon_schools, 
+#           "data-clean/oregon-schools-geocoded.csv",
+#           na = "")
 
 # Kindergarten Readiness --------------------------------------------------
 
@@ -65,53 +65,55 @@ write_csv(oregon_schools,
 
 # download.file("https://www.oregon.gov/ode/educator-resources/assessment/Documents/KA_Media_1819.xlsx",
 #               destfile = "data-raw/kindergarten-readiness-1819.xlsx")
-# 
-# download.file("https://www.oregon.gov/ode/educator-resources/assessment/Documents/KA_Media_1718.xlsx",
-#               destfile = "data-raw/kindergarten-readiness-1718.xlsx")
-# 
-# download.file("https://www.oregon.gov/ode/educator-resources/assessment/Documents/KA_Media_1617.xlsx",
-#               destfile = "data-raw/kindergarten-readiness-1617.xlsx")
-# 
-# download.file("https://www.oregon.gov/ode/educator-resources/assessment/Documents/KA_Media_1516.xlsx",
-#               destfile = "data-raw/kindergarten-readiness-1516.xlsx")
-# 
-# download.file("https://www.oregon.gov/ode/educator-resources/assessment/Documents/oka_results_state-district-school_1415.xlsx",
-#               destfile = "data-raw/kindergarten-readiness-1415.xlsx")
-# 
-# download.file("https://www.oregon.gov/ode/educator-resources/assessment/Documents/oka-results_state-district-school_20140131.xlsx",
-#               destfile = "data-raw/kindergarten-readiness-1314.xlsx")
 
-# dk_read_kindergarten_readiness_data <- function(sheet) {
-#   read_excel(sheet,
-#              skip = 7,
-#              na = "*") %>% 
-#     set_names(c("county", 
-#                 "district_id", 
-#                 "district_name",
-#                 "institution_id",
-#                 "institution_name",
-#                 "institution_type",
-#                 "subgroup_type",
-#                 "subgroup",
-#                 "approaches_to_learning_self_regulation",
-#                 "approaches_to_learning_interpersonal_skills",
-#                 "approaches_to_learning_total_score",
-#                 "approaches_to_learning_n",
-#                 "math_avg_number_correct",
-#                 "math_n",
-#                 "literacy_letter_names_number_correct",
-#                 "literacy_letter_names_number_correct_n",
-#                 "literacy_letter_sounds_number_correct",
-#                 "literacy_letter_sounds_number_correct_n"))
-# }
-# 
-# kindergarten_readiness_data_files <- dir_ls(path = "data-raw",
-#                                             regexp = "kindergarten-readiness")
-# 
-# kindergarten_readiness <- map_dfr(kindergarten_readiness_data_files, dk_read_kindergarten_readiness_data)
-# 
-# dk_read_kindergarten_readiness_data("data-raw/kindergarten-readiness-1415.xlsx") %>% 
-#   view()
+kindergarten_readiness <- read_excel("data-raw/kindergarten-readiness-1819.xlsx",
+                                     skip = 6,
+                                     na = "*") %>%
+  slice(-(1:5)) %>%
+  set_names(c("county",
+              "district_id",
+              "district_name",
+              "institution_id",
+              "institution_name",
+              "institution_type",
+              "student_group_type",
+              "student_group",
+              "approaches_to_learning_self_regulation_score",
+              "approaches_to_learning_interpersonal_skills_score",
+              "approaches_to_learning_total_score_score",
+              "approaches_to_learning_n",
+              "math_avg_number_correct_score",
+              "math_n",
+              "literacy_uppercase_letter_names_number_correct_score",
+              "literacy_uppercase_letter_names_number_correct_n",
+              "literacy_lowercase_letter_names_number_correct_score",
+              "literacy_lowercase_letter_names_number_correct_n",
+              "literacy_letter_sounds_number_correct_score",
+              "literacy_letter_sounds_number_correct_n")) 
+
+kindergarten_readiness_state_avgs <- kindergarten_readiness %>% 
+  filter(institution_type == "State")
+  
+
+kindergarten_readiness_by_school <- kindergarten_readiness %>% 
+  filter(student_group == "Total Population") %>% 
+  filter(institution_type == "School")
+
+
+  
+
+# Load geocoded schools data
+
+schools <- read_csv("data-clean/oregon-schools-geocoded.csv") %>% 
+  left_join(kindergarten_readiness_by_school, by = c("iid" = "institution_id")) 
+
+
+# Write to CSV
+
+write_csv(schools,
+          "data-clean/oregon-schools.csv",
+          na = "")
+
 
 # School District Boundaries ----------------------------------------------
 

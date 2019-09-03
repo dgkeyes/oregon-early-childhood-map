@@ -29,8 +29,20 @@ navbarPage("Oregon Early Childhood Needs Assessment", id = "nav",
                     
                     div(class = "outer",
                         
-                        leafletOutput(outputId = "map",
+                        mapdeckOutput(outputId = "map",
                                       height = "100%"),
+                        # absolutePanel(id = "legend",
+                        #               class = "panel panel-default",
+                        #               fixed = TRUE,
+                        #               draggable = FALSE,
+                        #               top = 10,
+                        #               left = 450,
+                        #               right = 10,
+                        #               bottom = "auto",
+                        #               width = 475,
+                        #               height = "auto",
+                        #               h1("Test")),
+                                      
                         absolutePanel(id = "controls",
                                       class = "panel panel-default",
                                       fixed = TRUE,
@@ -43,8 +55,10 @@ navbarPage("Oregon Early Childhood Needs Assessment", id = "nav",
                                       height = "auto",
                                       # h1("Oregon Early Childhood Needs Assessment"),
                                       # p("Lorem ipsum dolor amet shabby chic iceland squid, biodiesel scenester intelligentsia mixtape live-edge brooklyn chartreuse. Adaptogen poutine aesthetic slow-carb single-origin coffee la croix vexillologist."),
-                                      bs_accordion(id = "beatles") %>%
+                                      bs_accordion(id = "dk_accordion") %>%
                                         bs_set_opts(panel_type = "primary", use_heading_link = TRUE) %>%
+                                        bs_append("Legend", content = 
+                                                    p("Test")) %>% 
                                         bs_append(title = "Early Learning Programs", content =
                                                     list(
                                                       sliderTextInput(
@@ -120,33 +134,16 @@ navbarPage("Oregon Early Childhood Needs Assessment", id = "nav",
                                           )
                                           
                                         )) %>%
-                                        # bs_append(title = "Communities",
-                                        #           content =  pickerInput(
-                                        #             inputId = "community_attribute",
-                                        #             # width = "90%",
-                                        #             label = NULL,
-                                        #             choices = community_attributes_vector
-                                        #           ))
                                       bs_append(title = "Communities",
                                                 content =  pickerInput(
                                                   inputId = "community_attribute",
-                                                  # width = "90%",
-                                                  label = NULL,
-                                                  # options = list(
-                                                  #   title = "Please select one ..."
-                                                  # ),
+                                                  # options = list(title = "Race/Ethnicity: White"),
                                                   choices = list(
                                                     `Race/Ethnicity` = community_attributes_race_ethnicity,
                                                     `Language` = community_attributes_language,
                                                     `Other Measures` = community_attributes_non_race_ethnicity
                                                   )))
-                                      # bs_append(title = "Communities",
-                                      #           content =  awesomeRadio(
-                                      #             inputId = "community_attribute",
-                                      #             width = "90%",
-                                      #             label = NULL,
-                                      #             choices = community_attributes_vector
-                                      #           ))
+                              
                                       
                                       
                                       
