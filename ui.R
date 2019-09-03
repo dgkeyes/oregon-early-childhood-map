@@ -56,8 +56,8 @@ navbarPage("Oregon Early Childhood Needs Assessment", id = "nav",
                                       # h1("Oregon Early Childhood Needs Assessment"),
                                       # p("Lorem ipsum dolor amet shabby chic iceland squid, biodiesel scenester intelligentsia mixtape live-edge brooklyn chartreuse. Adaptogen poutine aesthetic slow-carb single-origin coffee la croix vexillologist."),
                                       bs_accordion(id = "dk_accordion") %>%
-                                        bs_set_opts(panel_type = "primary", use_heading_link = TRUE) %>%
-                                        bs_append("Legend", content = 
+                                        bs_set_opts(panel_type = "info", use_heading_link = TRUE) %>%
+                                        bs_append("General Information", content = 
                                                     p("Test")) %>% 
                                         bs_append(title = "Early Learning Programs", content =
                                                     list(
@@ -117,14 +117,20 @@ navbarPage("Oregon Early Childhood Needs Assessment", id = "nav",
                                                     ))) %>% 
                                         bs_append(title = "Schools", content = list(
                                           p("Oregon Kindergarten Readiness Assessment Results"),
-                                          awesomeRadio(
-                                            inputId = "kindergarten_assessment",
-                                            label = NULL,
-                                            # inline = TRUE,
-                                            choices = c("Early Math",
-                                                        "Early Reading",
-                                                        "Approaches to Learning"),
-                                            selected = "Early Math"
+                                          # awesomeRadio(
+                                          #   inputId = "kindergarten_assessment",
+                                          #   label = NULL,
+                                          #   # inline = TRUE,
+                                          #   choices = c("Early Math",
+                                          #               "Early Reading",
+                                          #               "Approaches to Learning"),
+                                          #   selected = "Early Math"
+                                          # ),
+                                          prettySwitch(
+                                            inputId = "show_schools",
+                                            label = "Show Schools",
+                                            value = FALSE,
+                                            status = "primary"
                                           ),
                                           prettySwitch(
                                             inputId = "district_boundaries",
