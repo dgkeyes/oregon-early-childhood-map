@@ -13,7 +13,6 @@ library(scales)
 
 # Colors ------------------------------------------------------------------
 
-# Taken from https://oregonearlylearning.com/
 
 ode_green <- "#408740"
 ode_red <- "#DF3416"
@@ -61,7 +60,13 @@ server <- function(input, output) {
     school_district_boundaries
   })
 
+  early_learning_hubs_regions_reactive <- reactive({
+    early_learning_hubs_regions
+  })
   
+  early_learning_hubs_locations_reactive <- reactive({
+    early_learning_hubs_locations
+  })
   
   
   
@@ -91,7 +96,7 @@ server <- function(input, output) {
   
   observeEvent({input$community_attribute},{
     
-    mapdeck_update(map_id = "map") %>% 
+    mapdeck_update(map_id = "map") %>%
       add_sf(data = community_attributes_filtered(),
              fill_colour = "value",
              fill_opacity = 150,
@@ -104,7 +109,7 @@ server <- function(input, output) {
              # legend_format = list( fill_colour = percent_format ),
              legend_options = list(title = community_attributes_filtered()$measure,
                                    digits = 1),
-             na_colour = "#fafafa") 
+             na_colour = "#fafafa")
 
     
   })
@@ -131,6 +136,52 @@ server <- function(input, output) {
     } else {
       mapdeck_update(map_id = "map") %>% 
         clear_path(layer_id = "school_districts")
+    }
+    
+  })
+  
+
+# Early Learning Hubs -----------------------------------------------------
+
+  
+  observeEvent({input$hub_location},{
+    
+    if (input$hub_location == TRUE) {
+      mapdeck_update(map_id = "map") %>% 
+        add_scatterplot(data = early_learning_hubs_locations_reactive(),
+                        fill_colour = ode_magenta,
+                        fill_opacity = 150,
+                        radius_max_pixels = base_radius / 3,
+                        radius = base_radius * 5,
+                        tooltip = "hub_name",
+                        update_view = FALSE,
+                        layer_id = "hub_locations_layer")
+      
+    } else{
+      mapdeck_update(map_id = "map") %>% 
+        clear_path(layer_id = "hub_locations_layer")
+    }
+    
+  })
+  
+  
+  observeEvent({input$hub_areas},{
+    
+    if (input$hub_areas == TRUE) {
+      mapdeck_update(map_id = "map") %>% 
+        add_sf(data = early_learning_hubs_regions_reactive(),
+               fill_opacity = 1,
+               fill_colour = "transparent",
+               auto_highlight = TRUE,
+               highlight_colour = paste0(ode_magenta, "25"),
+               stroke_colour = ode_magenta,
+               stroke_width = 100,
+               tooltip = "hub_name",
+               update_view = FALSE,
+               layer_id = "hub_areas_layer")
+    } else {
+      mapdeck_update(map_id = "map") %>% 
+        clear_path(layer_id = "hub_areas_layer")
     }
     
   })

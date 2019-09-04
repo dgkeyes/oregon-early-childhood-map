@@ -42,7 +42,7 @@ navbarPage("Oregon Early Childhood Needs Assessment", id = "nav",
                         #               width = 475,
                         #               height = "auto",
                         #               h1("Test")),
-                                      
+                        
                         absolutePanel(id = "controls",
                                       class = "panel panel-default",
                                       fixed = TRUE,
@@ -51,14 +51,20 @@ navbarPage("Oregon Early Childhood Needs Assessment", id = "nav",
                                       left = 50,
                                       right = 10,
                                       bottom = "auto",
-                                      width = 475,
+                                      width = 400,
                                       height = "auto",
                                       # h1("Oregon Early Childhood Needs Assessment"),
                                       # p("Lorem ipsum dolor amet shabby chic iceland squid, biodiesel scenester intelligentsia mixtape live-edge brooklyn chartreuse. Adaptogen poutine aesthetic slow-carb single-origin coffee la croix vexillologist."),
                                       bs_accordion(id = "dk_accordion") %>%
                                         bs_set_opts(panel_type = "info", use_heading_link = TRUE) %>%
-                                        bs_append("General Information", content = 
-                                                    p("Test")) %>% 
+                                        bs_append("How to Use This Map", content = list(
+                                          p("This map shows the following:"),
+                                          p(class = "ode-orange", "Early Learning Programs"),
+                                          p(class = "ode-magenta", "Systems (need description)"),
+                                          p(class = "ode-green", "Schools"),
+                                          p(class = "ode-blue", "Communities (need description)"),
+                                          p("There would then be more info here about what the map includes and how to use it.")
+                                          )) %>% 
                                         bs_append(title = "Early Learning Programs", content =
                                                     list(
                                                       sliderTextInput(
@@ -94,11 +100,9 @@ navbarPage("Oregon Early Childhood Needs Assessment", id = "nav",
                                                                            label = "Also Show",
                                                                            # inline = TRUE,
                                                                            choices = c("Accepts DHS",
-                                                                                       "Head Start",
-                                                                                       "Relief Nursery"),
+                                                                                       "Head Start"),
                                                                            selected = c("Accepts DHS",
-                                                                                        "Head Start",
-                                                                                        "Relief Nursery"))
+                                                                                        "Head Start"))
                                                     )) %>%
                                         bs_append(title = "Systems",
                                                   content =  list(
@@ -116,7 +120,7 @@ navbarPage("Oregon Early Childhood Needs Assessment", id = "nav",
                                                       status = "primary"
                                                     ))) %>% 
                                         bs_append(title = "Schools", content = list(
-                                          p("Oregon Kindergarten Readiness Assessment Results"),
+                                          # p("Oregon Kindergarten Readiness Assessment Results"),
                                           # awesomeRadio(
                                           #   inputId = "kindergarten_assessment",
                                           #   label = NULL,
@@ -140,16 +144,17 @@ navbarPage("Oregon Early Childhood Needs Assessment", id = "nav",
                                           )
                                           
                                         )) %>%
-                                      bs_append(title = "Communities",
-                                                content =  pickerInput(
-                                                  inputId = "community_attribute",
-                                                  # options = list(title = "Race/Ethnicity: White"),
-                                                  choices = list(
-                                                    `Race/Ethnicity` = community_attributes_race_ethnicity,
-                                                    `Language` = community_attributes_language,
-                                                    `Other Measures` = community_attributes_non_race_ethnicity
-                                                  )))
-                              
+                                        bs_append(title = "Communities",
+                                                  content =  pickerInput(
+                                                    inputId = "community_attribute",
+                                                    # options = list(title = "Race/Ethnicity: White"),
+                                                    choices = list(
+                                                      # `Please select an option` = "test",
+                                                      `Race/Ethnicity` = community_attributes_race_ethnicity,
+                                                      `Language` = community_attributes_language,
+                                                      `Other Measures` = community_attributes_non_race_ethnicity
+                                                    )))
+                                      
                                       
                                       
                                       

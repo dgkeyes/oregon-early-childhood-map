@@ -254,3 +254,31 @@ div.outer {
   content: '';
   background-image: url("/images/eld-logo.png");
 }
+
+
+/* ODE Colors */
+
+.ode-green {
+  color: #408740;
+}
+
+.ode-green {
+  color: #408740;
+}
+
+.ode-red {
+  color: #DF3416;
+}
+
+.ode-magenta {
+  color: #9f2065;
+}
+
+.ode-orange {
+  color: #e26b2a;
+}
+
+.ode-blue {
+  color: #1b75bc;
+}
+

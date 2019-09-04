@@ -30,8 +30,10 @@ schools <- read_csv("data-clean/oregon-schools.csv") %>%
   drop_na(institution_name) %>% 
   # Create popup content
   mutate(popup_content = glue("<h2>{name}</h2>
-                              <p>{street_city} {county.x}</p>
-                              Approaches to Learning: {approaches_to_learning_total_score_score}")) %>% 
+                              # <p>{street_city} {county.x}</p>
+                              <p>Approaches to Learning: {approaches_to_learning_total_score_score}</p>
+                              <p>Math: {math_avg_number_correct_score}</p>
+                              <p>Letter Sounds: {literacy_letter_sounds_number_correct_score}</p>")) %>% 
   st_as_sf(coords = c("lon", "lat"))
 
 
@@ -70,12 +72,7 @@ child_care_facilities <- read_csv("data-clean/child-care-facilities-geocoded.csv
 
 early_learning_hubs_locations <- read_csv("data-clean/early-learning-hubs-locations.csv")
 
-early_learning_hubs_regions <- read_csv("data-clean/early-learning-hubs-regions.csv")
-
-early_learning_hubs_regions <- counties(state = "Oregon",
-                                        cb = TRUE) %>%
-  clean_names() %>% 
-  left_join(early_learning_hubs_regions, by = c("name" = "region")) 
+early_learning_hubs_regions <- st_read("data-clean/early-learning-hubs-regions.shp")
 
 
 # Community Attributes ----------------------------------------------------
