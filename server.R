@@ -106,6 +106,7 @@ server <- function(input, output) {
              legend = TRUE,
              palette = "blues",
              update_view = FALSE,
+             layer_id = "comunity_attributes_layer",
              # legend_format = list( fill_colour = percent_format ),
              legend_options = list(title = community_attributes_filtered()$measure,
                                    digits = 1),
@@ -169,6 +170,7 @@ server <- function(input, output) {
     
     if (input$hub_areas == TRUE) {
       mapdeck_update(map_id = "map") %>% 
+        clear_path(layer_id = "community_attributes_layer") %>% 
         add_sf(data = early_learning_hubs_regions_reactive(),
                fill_opacity = 1,
                fill_colour = "transparent",
